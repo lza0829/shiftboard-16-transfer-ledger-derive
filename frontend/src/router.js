@@ -4,6 +4,7 @@ import Shifts from './pages/Shifts.vue'
 import Batches from './pages/Batches.vue'
 import HandoverDesk from './pages/HandoverDesk.vue'
 import HandoverLogs from './pages/HandoverLogs.vue'
+import Ledger from './pages/Ledger.vue'
 import Reconcile from './pages/Reconcile.vue'
 
 export default createRouter({
@@ -14,6 +15,7 @@ export default createRouter({
     { path: '/batches', component: Batches },
     { path: '/handover', component: HandoverDesk },
     { path: '/logs', component: HandoverLogs },
+    { path: '/ledger', component: Ledger },
     { path: '/reconcile', component: Reconcile },
   ],
 })

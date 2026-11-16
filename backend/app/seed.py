@@ -46,6 +46,46 @@ CREATE TABLE IF NOT EXISTS reconcile_reports (
   detail_json TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+-- 流转账本（择一形态：独立只追加账本表，由过户事务同事务写入；不采用按日分区表）
+CREATE TABLE IF NOT EXISTS transfer_ledger (
+  id INTEGER PRIMARY KEY,
+  occurred_at TEXT NOT NULL,
+  handover_id INTEGER NOT NULL REFERENCES handovers(id),
+  biz_key TEXT NOT NULL,
+  from_shift_id INTEGER NOT NULL REFERENCES shifts(id),
+  to_shift_id INTEGER NOT NULL REFERENCES shifts(id),
+  direction TEXT NOT NULL CHECK (direction IN ('过户', '回拨'))
+);
+CREATE INDEX IF NOT EXISTS idx_transfer_ledger_biz ON transfer_ledger(biz_key);
+CREATE INDEX IF NOT EXISTS idx_transfer_ledger_handover ON transfer_ledger(handover_id);
+-- 账本只追加：触发器硬禁改删历史行
+CREATE TRIGGER IF NOT EXISTS trg_transfer_ledger_no_update BEFORE UPDATE ON transfer_ledger
+BEGIN SELECT RAISE(ABORT, '流转账本只追加，禁止改删历史行'); END;
+CREATE TRIGGER IF NOT EXISTS trg_transfer_ledger_no_delete BEFORE DELETE ON transfer_ledger
+BEGIN SELECT RAISE(ABORT, '流转账本只追加，禁止改删历史行'); END;
+-- 抽查对账运行记录
+CREATE TABLE IF NOT EXISTS reconcile_runs (
+  id INTEGER PRIMARY KEY,
+  sample_size INTEGER NOT NULL,
+  checked_count INTEGER NOT NULL,
+  diff_count INTEGER NOT NULL,
+  created_at TEXT NOT NULL
+);
+-- 对账差异（择一形态：独立对账差异表，只追加；不采用报告快照列）
+CREATE TABLE IF NOT EXISTS reconcile_diffs (
+  id INTEGER PRIMARY KEY,
+  run_id INTEGER NOT NULL REFERENCES reconcile_runs(id),
+  biz_key TEXT NOT NULL,
+  handover_id INTEGER,
+  expected_shift_id INTEGER,
+  actual_shift_id INTEGER,
+  reason TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE TRIGGER IF NOT EXISTS trg_reconcile_diffs_no_update BEFORE UPDATE ON reconcile_diffs
+BEGIN SELECT RAISE(ABORT, '对账差异只追加，禁止为抹平而删改'); END;
+CREATE TRIGGER IF NOT EXISTS trg_reconcile_diffs_no_delete BEFORE DELETE ON reconcile_diffs
+BEGIN SELECT RAISE(ABORT, '对账差异只追加，禁止为抹平而删改'); END;
 """
 
 

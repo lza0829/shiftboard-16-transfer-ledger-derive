@@ -6,3 +6,4 @@ backend/data_test/
 dist/
 .venv/
 *.pyc
+backend/data_accept/

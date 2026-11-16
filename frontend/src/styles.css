@@ -192,6 +192,19 @@ select {
   color: var(--ink);
   font: inherit;
 }
+input[type="date"], input[type="number"] {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  color-scheme: dark;
+}
+.link {
+  color: var(--accent);
+  border-bottom: 1px dotted var(--accent);
+  cursor: pointer;
+}
 
 .msg {
   margin-top: 10px;

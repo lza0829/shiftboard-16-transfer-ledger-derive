@@ -26,14 +26,19 @@ onMounted(async () => {
         <div class="stat"><div class="k">进行中交班</div><div class="v">{{ data.进行中交班 }}</div></div>
       </div>
       <div class="panel">
-        <h2>班次状态</h2>
+        <h2>班次状态（今日交入/交出由流转账本派生）</h2>
         <table>
-          <thead><tr><th>班次</th><th>值班人</th><th>状态</th></tr></thead>
+          <thead>
+            <tr><th>班次</th><th>值班人</th><th>状态</th><th>今日交入</th><th>今日交出</th><th>今日净流量</th></tr>
+          </thead>
           <tbody>
             <tr v-for="s in data.班次" :key="s.id">
               <td>{{ s.name }}</td>
               <td>{{ s.keeper }}</td>
               <td><span class="tag" :class="{ on: s.status === '值班中' }">{{ s.status }}</span></td>
+              <td>{{ s.今日交入 }}</td>
+              <td>{{ s.今日交出 }}</td>
+              <td>{{ s.今日净流量 > 0 ? '+' : '' }}{{ s.今日净流量 }}</td>
             </tr>
           </tbody>
         </table>
